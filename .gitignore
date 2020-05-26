@@ -68,3 +68,12 @@ _xmsgs/
 
 # system files
 *.DS_Store
+
+# compiled folders
+isim*
+fuse*
+*.exe
+*.wdb
+*.xise
+*.ini
+.vs/*

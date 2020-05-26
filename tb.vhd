@@ -27,6 +27,7 @@ architecture behavioural of receive_TB is
   signal   GOTOWE	:std_logic;				-- obserwowane wyjscie 'GOTOWE'
   signal   BLAD		:std_logic;				-- obserwowane wyjscie 'BLAD'
   signal   D		:std_logic_vector(SLOWO'range);		-- symulowana dana transmitowana
+  signal   TX		:std_logic;				-- symulowane wyjscie 'TX'
   
 begin
 
@@ -72,22 +73,21 @@ begin
   end process;							-- zakonczenie procesu
   
   receiver: entity work.receiver			-- instancja odbiornika szeregowego 'SERIAL_RX'
-    --generic map(						-- mapowanie parametrow biezacych
-      --F_ZEGARA             => F_ZEGARA,				-- czestotliwosc zegata w [Hz]
-     -- L_BODOW              => L_BODOW,				-- predkosc odbierania w [bodach]
-      ---B_SLOWA              => B_SLOWA,				-- liczba bitow slowa danych (5-8)
-      --B_PARZYSTOSCI        => B_PARZYSTOSCI,			-- liczba bitow parzystosci (0-1)
-     -- B_STOPOW             => B_STOPOW,				-- liczba bitow stopu (1-2)
-      --N_RX                 => N_RX				-- negacja logiczna sygnalu szeregowego
-      --N_SLOWO              => N_SLOWO				-- negacja logiczna slowa danych
-    
-    port map(							-- mapowanie sygnalow do portow
+     port map(							-- mapowanie sygnalow do portow
      -- R                    => R,				-- sygnal resetowania
       clk                    => C,				-- zegar taktujacy
       rx                   => RX,				-- odebrany sygnal szeregowy
       data_out                => SLOWO			-- odebrane slowo danych
       --GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
       --BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
+    );
+	 
+  transmitter: entity work.transmitter
+    port map (
+      R				=> R,				-- sygnal resetujacy
+      clk			=> C,				-- zegar taktujacy
+      data_in			=> SLOWO,			-- wysylane slowo danych
+      tx			=> TX				-- szeregowe wyjscie
     );
 
 end behavioural;
