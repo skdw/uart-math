@@ -4,8 +4,11 @@ use IEEE.std_logic_unsigned.all;
 
 entity receiver is
         port ( rx : in std_logic;
+					rst: in std_logic;
                         clk : in std_logic;
-                        data_out : out std_logic_vector (7 downto 0) );
+                        data_out : out std_logic_vector (7 downto 0);
+GOTOWE : out std_logic;
+BLAD : out std_logic								);
 								
 end receiver;
 
@@ -17,13 +20,20 @@ signal data : std_logic_vector (7 downto 0);
 signal rx_p : std_logic;								--previous rx;
 begin
 
-process (clk)	--bufer
+process (clk,rst)	--bufer
 begin
-if (clk = '1' and clk'event) then
+if (rst = '1') then
+data_out  <= (others => '0');
+GOTOWE <='0';
+BLAD <='0';
+count<='0';
+elsif (clk = '1' and clk'event) then
 
 if (rx_p = '1' and rx = '0') then       -- jesli start        count <= '1';
         rx_p <= rx;
 		  count<='1';
+		  GOTOWE<='0';
+		  BLAD<='0';
 else rx_p <= rx;
 end if;
 
@@ -33,6 +43,7 @@ case (state) is
                         if (rx = '0') then      -- jeszcze raz sprawdzamy start bit
                                 state <= 1;     
                         else 
+											BLAD<='1';
 											state <= 0;
                                 count <= '0';
                         end if;
@@ -56,6 +67,9 @@ case (state) is
                         count <= '0';
                         if (rx = '1') then              -- sprawdzamy stop bit
                                 data_out <= data;       -- zwracamy caly bufer
+										  GOTOWE <='1';
+								else
+									BLAD<='1';
                         end if;
 end case;
 end if;

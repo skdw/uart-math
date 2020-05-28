@@ -75,17 +75,18 @@ begin
   
   receiver: entity work.receiver			-- instancja odbiornika szeregowego 'SERIAL_RX'
      port map(							-- mapowanie sygnalow do portow
-     -- R                    => R,				-- sygnal resetowania
       clk                    => C,				-- zegar taktujacy
+		rst							=>R,
       rx                   => RX,				-- odebrany sygnal szeregowy
-      data_out                => DATA_IN			-- odebrane slowo danych
-      --GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
-      --BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
+      data_out                => DATA_IN,			-- odebrane slowo danych
+      GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
+      BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
     );
     
   modifier: entity work.modifier
     port map (
       data_in                   => DATA_IN,			-- modyfikowane wejscie
+		GOTOWE							=>GOTOWE,
       data_out                  => DATA_OUT			-- wynik
     );
 	 
