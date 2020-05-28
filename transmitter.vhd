@@ -11,7 +11,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity transmitter is
-    Port ( R : in STD_LOGIC;				-- sygnal resetujacy
+    Port ( r : in STD_LOGIC;				-- sygnal resetujacy
 	   clk : in  STD_LOGIC;				-- zegar taktujacy
            data_in : in  STD_LOGIC_VECTOR(7 downto 0);	-- wejscie rownolegle
            tx : out  STD_LOGIC);			-- wyjscie szeregowe
@@ -24,24 +24,24 @@ architecture Behavioral of transmitter is
 
 begin
     
-    process (R, clk) is				-- proces odbiornika
+    process (r, clk) is				-- proces odbiornika
     begin
     
-        if(R='1') then				-- asynchroniczna inicjalizacja rejestrow
+        if(r='1') then				-- asynchroniczna inicjalizacja rejestrow
 	
             pos <= 0;
 	    buff <= '0';
 	    
         elsif(rising_edge(clk)) then		-- synchroniczna praca odbiornika
-	
-            if(pos > 7) then
-                pos <= 0;			-- resetujemy pozycje, gdy dochodzimy do konca bajtu
-            end if;
 	    
             buff <= data_in(pos);
-	    tx <= buff;				-- wypisanie bajtu
+	    tx <= buff;				-- wypisanie bitu
 	    
-	    pos <= pos + 1;			-- przejscie na kolejny bit
+	    if(pos < 7) then
+		pos <= pos + 1;			-- przejscie na kolejny bit
+	    else
+	        pos <= 0;			-- resetujemy pozycje, gdy dochodzimy do konca bajtu
+	    end if;
             
 	end if;
     

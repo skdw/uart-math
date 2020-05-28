@@ -84,7 +84,7 @@ begin
 	 
   transmitter: entity work.transmitter
     port map (
-      R				=> R,				-- sygnal resetujacy
+      r				=> R,				-- sygnal resetujacy
       clk			=> C,				-- zegar taktujacy
       data_in			=> SLOWO,			-- wysylane slowo danych
       tx			=> TX				-- szeregowe wyjscie
