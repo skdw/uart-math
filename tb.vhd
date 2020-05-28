@@ -23,10 +23,11 @@ architecture behavioural of receive_TB is
   signal   R		:std_logic := '0';			-- symulowany sygnal resetujacacy
   signal   C		:std_logic := '1';			-- symulowany zegar taktujacy inicjowany na '1'
   signal   RX		:std_logic;				-- symulowane wejscie 'RX'
-  signal   SLOWO	:std_logic_vector(B_SLOWA-1 downto 0);	-- obserwowane wyjscie 'SLOWO'
+  signal   DATA_IN	:std_logic_vector(B_SLOWA-1 downto 0);	-- obserwowane wyjscie 'DATA_IN'
+  signal   DATA_OUT	:std_logic_vector(DATA_IN'range);	-- obserwowane wyjscie 'DATA_OUT'
   signal   GOTOWE	:std_logic;				-- obserwowane wyjscie 'GOTOWE'
   signal   BLAD		:std_logic;				-- obserwowane wyjscie 'BLAD'
-  signal   D		:std_logic_vector(SLOWO'range);		-- symulowana dana transmitowana
+  signal   D		:std_logic_vector(DATA_IN'range);		-- symulowana dana transmitowana
   signal   TX		:std_logic;				-- symulowane wyjscie 'TX'
   
 begin
@@ -77,16 +78,22 @@ begin
      -- R                    => R,				-- sygnal resetowania
       clk                    => C,				-- zegar taktujacy
       rx                   => RX,				-- odebrany sygnal szeregowy
-      data_out                => SLOWO			-- odebrane slowo danych
+      data_out                => DATA_IN			-- odebrane slowo danych
       --GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
       --BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
+    );
+    
+  modifier: entity work.modifier
+    port map (
+      data_in                   => DATA_IN,			-- modyfikowane wejscie
+      data_out                  => DATA_OUT			-- wynik
     );
 	 
   transmitter: entity work.transmitter
     port map (
       r				=> R,				-- sygnal resetujacy
       clk			=> C,				-- zegar taktujacy
-      data_in			=> SLOWO,			-- wysylane slowo danych
+      data_in			=> DATA_OUT,			-- wysylane slowo danych
       tx			=> TX				-- szeregowe wyjscie
     );
 
