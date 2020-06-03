@@ -34,7 +34,7 @@ end modifier;
 
 architecture Behavioral of modifier is
 
-signal data : signed(7 downto 0);
+signal data : signed(7 downto 0) := "00000000";
 begin
 --  process (GOTOWE)							-- proces bezwarunkowy
 --  begin								-- czesc wykonawcza procesu
