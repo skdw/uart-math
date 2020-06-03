@@ -36,13 +36,13 @@ architecture Behavioral of modifier is
 
 signal data : signed(7 downto 0);
 begin
-  process (GOTOWE)							-- proces bezwarunkowy
-  begin								-- czesc wykonawcza procesu
-  
-		if (GOTOWE = '1') then
+--  process (GOTOWE)							-- proces bezwarunkowy
+--  begin								-- czesc wykonawcza procesu
+--  
+--		if (GOTOWE = '1') then
         data <= signed(data_in);
         data_out <= std_logic_vector(data + 1);
-		end if;
-  end process;	
+--		end if;
+--  end process;	
 end Behavioral;
 

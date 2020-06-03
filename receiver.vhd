@@ -8,7 +8,8 @@ entity receiver is
                         clk : in std_logic;
                         data_out : out std_logic_vector (7 downto 0);
 GOTOWE : out std_logic;
-BLAD : out std_logic								);
+BLAD : out std_logic;
+ind:out integer range 0 to 9								);
 								
 end receiver;
 
@@ -40,30 +41,42 @@ end if;
 if (counter = 2) then
 case (state) is
         when 0 =>
-                        if (rx = '0') then      -- jeszcze raz sprawdzamy start bit
-                                state <= 1;     
+                        if (rx = '0') then   
+										  ind<=state;     -- jeszcze raz sprawdzamy start bit
+                                state <= 1;   
                         else 
 											BLAD<='1';
 											state <= 0;
+										  ind<=state;
                                 count <= '0';
                         end if;
         when 1 => data(0) <= rx;        -- zapisujemy bity po kolei
+										  ind<=state;
                                 state <= 2;
         when 2 => data(1) <= rx;
+										  ind<=state;
                                 state <= 3;
         when 3 => data(2) <= rx;
+										  ind<=state;
                                 state <= 4;
         when 4 => data(3) <= rx;
+										  ind<=state;
                                 state <= 5;
         when 5 => data(4) <= rx;
+										  ind<=state;
                                 state <= 6;
         when 6 => data(5) <= rx;
+										  ind<=state;
                                 state <= 7;
         when 7 => data(6) <= rx;
+										  ind<=state;
                                 state <= 8;
         when 8 => data(7) <= rx;
+										  ind<=state;
                                 state <= 9;
-        when 9 => state <= 0;
+        when 9 => 
+										  ind<=state;
+										  state <= 0;
                         count <= '0';
                         if (rx = '1') then              -- sprawdzamy stop bit
                                 data_out <= data;       -- zwracamy caly bufer

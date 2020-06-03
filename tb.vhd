@@ -29,7 +29,8 @@ architecture behavioural of receive_TB is
   signal   BLAD		:std_logic;				-- obserwowane wyjscie 'BLAD'
   signal   D		:std_logic_vector(DATA_IN'range);		-- symulowana dana transmitowana
   signal   TX		:std_logic;				-- symulowane wyjscie 'TX'
-  
+  signal RX_IND 	:integer range 0 to 9;
+  signal TX_IND 	:integer range 0 to 9;
 begin
 
  process is							-- proces bezwarunkowy
@@ -57,7 +58,11 @@ begin
       RX <= neg('0',N_RX);					-- ustawienie 'RX' na wartosc bitu START
       wait for O_BITU;						-- odczekanie jednego bodu
       for i in 0 to B_SLOWA-1 loop				-- petla po kolejnych bitach slowa danych 'D'
+--		if(D>0) then
+--		RX<=TX;
+--		else
         RX <= neg(neg(D(i),N_SLOWO),N_RX);			-- ustawienie 'RX' na wartosc bitu 'D(i)'
+--		  end if;
         wait for O_BITU;					-- odczekanie jednego bodu
       end loop;							-- zakonczenie petli
 --      if (B_PARZYSTOSCI = 1) then				-- badanie aktywowania bitu parzystosci
@@ -69,7 +74,7 @@ begin
         wait for O_BITU;					-- odczekanie jednego bodu
       end loop;							-- zakonczenie petli
       D <= D + 5;						-- zwiekszenia wartosci 'D' o 7
-      wait for 10*O_ZEGARA;					-- odczekanie 10-ciu okresow zegara
+      wait for 30*O_ZEGARA;					-- odczekanie 10-ciu okresow zegara
     end loop;							-- zakonczenie petli
   end process;							-- zakonczenie procesu
   
@@ -80,7 +85,8 @@ begin
       rx                   => RX,				-- odebrany sygnal szeregowy
       data_out                => DATA_IN,			-- odebrane slowo danych
       GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
-      BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
+      BLAD                 => BLAD,				-- flaga wykrycia bledu w odbiorze
+		ind						=>RX_IND
     );
     
   modifier: entity work.modifier
@@ -95,7 +101,8 @@ begin
       r				=> R,				-- sygnal resetujacy
       clk			=> C,				-- zegar taktujacy
       data_in			=> DATA_OUT,			-- wysylane slowo danych
-      tx			=> TX				-- szeregowe wyjscie
+      tx			=> TX	,			-- szeregowe wyjscie
+		ind			=>TX_IND
     );
 
 end behavioural;
