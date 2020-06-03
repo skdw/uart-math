@@ -39,7 +39,7 @@ ind<=state;
 elsif(rising_edge(clk)) then
 		
 		if(count='0') then
-				tx<='0';
+				tx<='1';
 				if(unsigned(buff)/=unsigned(data_in)) then
 					buff<=data_in;
 					count<='1';
@@ -48,7 +48,7 @@ elsif(rising_edge(clk)) then
 		elsif (counter = 0) then
 case (state) is
         when 0 =>
-										  tx<='1';   --start bit
+										  tx<='0';   --start bit
 										  ind<=state;
 											state <= 1;
         when 1 => tx <= buff(0);        -- zapisujemy bity po kolei
@@ -83,7 +83,7 @@ case (state) is
 										  ind<=state;
 										  state <= 0;
 											count <= '0';
-											tx<='0';  -- czekamy ma kolejne dane
+											tx<='1';  -- czekamy ma kolejne dane
 end case;
 end if;
 
