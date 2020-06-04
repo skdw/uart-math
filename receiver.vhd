@@ -41,9 +41,9 @@ end if;
 if (counter = 2) then
 case (state) is
         when 0 =>
-                        if (rx = '0') then   
-										  ind<=state;     -- jeszcze raz sprawdzamy start bit
-                                state <= 1;   
+                        if (rx = '0') then      -- jeszcze raz sprawdzamy start bit
+                                state <= 1; 
+										  ind<=state;    
                         else 
 											BLAD<='1';
 											state <= 0;
@@ -51,32 +51,32 @@ case (state) is
                                 count <= '0';
                         end if;
         when 1 => data(0) <= rx;        -- zapisujemy bity po kolei
-										  ind<=state;
                                 state <= 2;
+										  ind<=state;
         when 2 => data(1) <= rx;
-										  ind<=state;
                                 state <= 3;
+										  ind<=state;
         when 3 => data(2) <= rx;
-										  ind<=state;
                                 state <= 4;
+										  ind<=state;
         when 4 => data(3) <= rx;
-										  ind<=state;
                                 state <= 5;
+										  ind<=state;
         when 5 => data(4) <= rx;
-										  ind<=state;
                                 state <= 6;
+										  ind<=state;
         when 6 => data(5) <= rx;
-										  ind<=state;
                                 state <= 7;
+										  ind<=state;
         when 7 => data(6) <= rx;
-										  ind<=state;
                                 state <= 8;
+										  ind<=state;
         when 8 => data(7) <= rx;
-										  ind<=state;
                                 state <= 9;
-        when 9 => 
 										  ind<=state;
+        when 9 => 
 										  state <= 0;
+										  ind<=state;
                         count <= '0';
                         if (rx = '1') then              -- sprawdzamy stop bit
                                 data_out <= data;       -- zwracamy caly bufer

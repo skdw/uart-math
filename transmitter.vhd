@@ -49,39 +49,39 @@ elsif(rising_edge(clk)) then
 case (state) is
         when 0 =>
 										  tx<='0';   --start bit
-										  ind<=state;
 											state <= 1;
+										  ind<=state;
         when 1 => tx <= buff(0);        -- zapisujemy bity po kolei
-										  ind<=state;
                                 state <= 2;
+										  ind<=state;
         when 2 => tx <= buff(1);
-										  ind<=state;
                                state <= 3;
+										  ind<=state;
         when 3 => tx <= buff(2);
-										  ind<=state;
                                 state <= 4;
+										  ind<=state;
         when 4 => tx <= buff(3);
-										  ind<=state;
                                 state <= 5;
+										  ind<=state;
         when 5 => tx <= buff(4);
-										  ind<=state;
                                 state <= 6;
+										  ind<=state;
         when 6 => tx <= buff(5);
-										  ind<=state;
                                 state <= 7;
+										  ind<=state;
         when 7 => tx <= buff(6);
-										  ind<=state;
                                 state <= 8;
+										  ind<=state;
         when 8 => tx <= buff(7);
-										  ind<=state;
                                 state <= 9;
-        when 9 =>
 										  ind<=state;
+        when 9 =>
 										  state <= 10;
+										  ind<=state;
 								tx<='1'; -- stop bit
 		when 10 =>
-										  ind<=state;
 										  state <= 0;
+										  ind<=state;
 											count <= '0';
 											tx<='1';  -- czekamy ma kolejne dane
 end case;
