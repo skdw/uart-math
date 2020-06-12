@@ -23,11 +23,14 @@ architecture behavioural of receive_TB is
   signal   R		:std_logic := '0';			-- symulowany sygnal resetujacacy
   signal   C		:std_logic := '1';			-- symulowany zegar taktujacy inicjowany na '1'
   signal   RX		:std_logic;				-- symulowane wejscie 'RX'
-  signal   SLOWO	:std_logic_vector(B_SLOWA-1 downto 0);	-- obserwowane wyjscie 'SLOWO'
+  signal   DATA_IN	:std_logic_vector(B_SLOWA-1 downto 0);	-- obserwowane wyjscie 'DATA_IN'
+  signal   DATA_OUT	:std_logic_vector(DATA_IN'range);	-- obserwowane wyjscie 'DATA_OUT'
   signal   GOTOWE	:std_logic;				-- obserwowane wyjscie 'GOTOWE'
   signal   BLAD		:std_logic;				-- obserwowane wyjscie 'BLAD'
-  signal   D		:std_logic_vector(SLOWO'range);		-- symulowana dana transmitowana
-  
+  signal   D		:std_logic_vector(DATA_IN'range);		-- symulowana dana transmitowana
+  signal   TX		:std_logic;				-- symulowane wyjscie 'TX'
+  signal RX_IND 	:integer range 0 to 9;
+  signal TX_IND 	:integer range 0 to 9;
 begin
 
  process is							-- proces bezwarunkowy
@@ -55,7 +58,11 @@ begin
       RX <= neg('0',N_RX);					-- ustawienie 'RX' na wartosc bitu START
       wait for O_BITU;						-- odczekanie jednego bodu
       for i in 0 to B_SLOWA-1 loop				-- petla po kolejnych bitach slowa danych 'D'
+--		if(D>0) then
+--		RX<=TX;
+--		else
         RX <= neg(neg(D(i),N_SLOWO),N_RX);			-- ustawienie 'RX' na wartosc bitu 'D(i)'
+--		  end if;
         wait for O_BITU;					-- odczekanie jednego bodu
       end loop;							-- zakonczenie petli
 --      if (B_PARZYSTOSCI = 1) then				-- badanie aktywowania bitu parzystosci
@@ -67,27 +74,35 @@ begin
         wait for O_BITU;					-- odczekanie jednego bodu
       end loop;							-- zakonczenie petli
       D <= D + 5;						-- zwiekszenia wartosci 'D' o 7
-      wait for 10*O_ZEGARA;					-- odczekanie 10-ciu okresow zegara
+      wait for 30*O_ZEGARA;					-- odczekanie 10-ciu okresow zegara
     end loop;							-- zakonczenie petli
   end process;							-- zakonczenie procesu
   
   receiver: entity work.receiver			-- instancja odbiornika szeregowego 'SERIAL_RX'
-    --generic map(						-- mapowanie parametrow biezacych
-      --F_ZEGARA             => F_ZEGARA,				-- czestotliwosc zegata w [Hz]
-     -- L_BODOW              => L_BODOW,				-- predkosc odbierania w [bodach]
-      ---B_SLOWA              => B_SLOWA,				-- liczba bitow slowa danych (5-8)
-      --B_PARZYSTOSCI        => B_PARZYSTOSCI,			-- liczba bitow parzystosci (0-1)
-     -- B_STOPOW             => B_STOPOW,				-- liczba bitow stopu (1-2)
-      --N_RX                 => N_RX				-- negacja logiczna sygnalu szeregowego
-      --N_SLOWO              => N_SLOWO				-- negacja logiczna slowa danych
-    
-    port map(							-- mapowanie sygnalow do portow
-     -- R                    => R,				-- sygnal resetowania
+     port map(							-- mapowanie sygnalow do portow
       clk                    => C,				-- zegar taktujacy
+		rst							=>R,
       rx                   => RX,				-- odebrany sygnal szeregowy
-      data_out                => SLOWO			-- odebrane slowo danych
-      --GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
-      --BLAD                 => BLAD				-- flaga wykrycia bledu w odbiorze
+      data_out                => DATA_IN,			-- odebrane slowo danych
+      GOTOWE               => GOTOWE,				-- flaga potwierdzenia odbioru
+      BLAD                 => BLAD,				-- flaga wykrycia bledu w odbiorze
+		ind						=>RX_IND
+    );
+    
+  modifier: entity work.modifier
+    port map (
+      data_in                   => DATA_IN,			-- modyfikowane wejscie
+		GOTOWE							=>GOTOWE,
+      data_out                  => DATA_OUT			-- wynik
+    );
+	 
+  transmitter: entity work.transmitter
+    port map (
+      r				=> R,				-- sygnal resetujacy
+      clk			=> C,				-- zegar taktujacy
+      data_in			=> DATA_OUT,			-- wysylane slowo danych
+      tx			=> TX	,			-- szeregowe wyjscie
+		ind			=>TX_IND
     );
 
 end behavioural;
